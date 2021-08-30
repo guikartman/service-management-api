@@ -5,6 +5,7 @@ import com.servicemanagement.dto.UserNewDTO;
 import com.servicemanagement.repository.UserRepository;
 import com.servicemanagement.service.exceptions.EmailNotFoundException;
 import com.servicemanagement.service.exceptions.UserAlreadyPresentException;
+import com.servicemanagement.service.exceptions.WrongPasswordException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -53,18 +54,21 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public void changePassword(String email, String newPassword) {
+    public void changePassword(String email, String oldPassword,String newPassword) {
         User user = repository.findByEmail(email).orElseThrow(() -> new EmailNotFoundException(email));
-        user.setPassword(bCryptPasswordEncoder.encode(newPassword));
-        repository.save(user);
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-        emailService.sendEmail(user, "Senha alterada no Usopper app.",String.format("Sua senha foi alterada, data/hora da modificação: %s", sdf.format(new Date(System.currentTimeMillis()))));
+        if (bCryptPasswordEncoder.matches(oldPassword,user.getPassword())) {
+            user.setPassword(bCryptPasswordEncoder.encode(newPassword));
+            repository.save(user);
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+            emailService.sendEmail(user, "Senha alterada no Usopper app.", String.format("Sua senha foi alterada, data/hora da modificação: %s", sdf.format(new Date(System.currentTimeMillis()))));
+        }else {
+            throw new WrongPasswordException();
+        }
     }
 
     @Override
     public User findUserByEmail(String email) {
-        User user = repository.findByEmail(email).orElseThrow(() -> new EmailNotFoundException(email));
-        return user;
+        return repository.findByEmail(email).orElseThrow(() -> new EmailNotFoundException(email));
     }
 
     private String newPassword() {

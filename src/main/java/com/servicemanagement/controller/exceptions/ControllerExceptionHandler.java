@@ -2,6 +2,7 @@ package com.servicemanagement.controller.exceptions;
 
 import com.servicemanagement.service.exceptions.EmailNotFoundException;
 import com.servicemanagement.service.exceptions.UserAlreadyPresentException;
+import com.servicemanagement.service.exceptions.WrongPasswordException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -24,6 +25,14 @@ public class ControllerExceptionHandler {
     @ExceptionHandler(EmailNotFoundException.class)
     public ResponseEntity<StandardError> emailNotFoundException(EmailNotFoundException e, HttpServletRequest request){
         String message = "Email não está cadastrado.";
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        StandardError err = new StandardError(Instant.now(), status.value(), message, e.getMessage(), request.getRequestURI());
+        return ResponseEntity.status(status).body(err);
+    }
+
+    @ExceptionHandler(WrongPasswordException.class)
+    public ResponseEntity<StandardError> wrongPasswordException(WrongPasswordException e, HttpServletRequest request){
+        String message = "A senha informada está incorreta.";
         HttpStatus status = HttpStatus.BAD_REQUEST;
         StandardError err = new StandardError(Instant.now(), status.value(), message, e.getMessage(), request.getRequestURI());
         return ResponseEntity.status(status).body(err);

@@ -38,8 +38,8 @@ public class UserController {
     }
 
     @PostMapping("/{email}/change-password")
-    public ResponseEntity<Void> changePassword(@PathVariable(name = "email") String email, @RequestParam(value = "password") String password) {
-        userService.changePassword(email, password);
+    public ResponseEntity<Void> changePassword(@PathVariable(name = "email") String email, @RequestParam(value = "oldPassword") String oldPassword,@RequestParam(value = "newPassword") String newPassword) {
+        userService.changePassword(email, oldPassword, newPassword);
         return ResponseEntity.accepted().build();
     }
 

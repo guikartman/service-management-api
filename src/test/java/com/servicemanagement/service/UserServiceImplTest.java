@@ -5,10 +5,12 @@ import com.servicemanagement.dto.UserNewDTO;
 import com.servicemanagement.repository.UserRepository;
 import com.servicemanagement.service.exceptions.EmailNotFoundException;
 import com.servicemanagement.service.exceptions.UserAlreadyPresentException;
+import com.servicemanagement.service.exceptions.WrongPasswordException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.Optional;
 
@@ -28,10 +30,13 @@ class UserServiceImplTest {
     @Mock
     private EmailService emailService;
 
+    private BCryptPasswordEncoder passwordEncoder;
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
         this.userService = new UserServiceImpl(userRepository, emailService);
+        this.passwordEncoder = new BCryptPasswordEncoder();
     }
 
     @Test
@@ -73,9 +78,9 @@ class UserServiceImplTest {
 
     @Test
     void changePasswordTest() {
-        User user = new User("User Test", "test@gmail.com","test");
+        User user = new User("User Test", "test@gmail.com", passwordEncoder.encode("oldPassword"));
         given(userRepository.findByEmail("test@gmail.com")).willReturn(Optional.of(user));
-        userService.changePassword("test@gmail.com","testPassword");
+        userService.changePassword("test@gmail.com","oldPassword","testPassword");
         verify(userRepository, times(1)).save(any(User.class));
         verify(emailService, times(1)).sendEmail(any(User.class), anyString(), anyString());
     }
@@ -83,7 +88,16 @@ class UserServiceImplTest {
     @Test
     void changePasswordExceptionTest() {
         given(userRepository.findByEmail("test@gmail.com")).willReturn(Optional.empty());
-        assertThrows(EmailNotFoundException.class,() -> userService.changePassword("test@gmail.com","testPassword"));
+        assertThrows(EmailNotFoundException.class,() -> userService.changePassword("test@gmail.com","oldPassword", "testPassword"));
+        verify(userRepository, never()).save(any(User.class));
+        verify(emailService, never()).sendEmail(any(User.class), anyString(), anyString());
+    }
+
+    @Test
+    void changeWrongPasswordExceptionTest() {
+        User user = new User("User Test", "test@gmail.com","oldPassword");
+        given(userRepository.findByEmail("test@gmail.com")).willReturn(Optional.of(user));
+        assertThrows(WrongPasswordException.class,() -> userService.changePassword("test@gmail.com","password", "testPassword"));
         verify(userRepository, never()).save(any(User.class));
         verify(emailService, never()).sendEmail(any(User.class), anyString(), anyString());
     }
