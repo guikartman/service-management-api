@@ -32,5 +32,5 @@ public class TokenController {
 
         resp.addCookie(cookie);
         resp.setStatus(HttpStatus.NO_CONTENT.value());
-    }
+}
 }

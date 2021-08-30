@@ -1,5 +1,7 @@
 package com.servicemanagement.config;
 
+import com.servicemanagement.service.EmailService;
+import com.servicemanagement.service.SmtpEmailService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
@@ -16,6 +18,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 	public void configure(HttpSecurity http) throws Exception {
 		http.authorizeRequests()
 				.antMatchers("/h2-console/**").permitAll()
+				.antMatchers("/users", "/users/retrieve-password").permitAll()
 				.anyRequest().authenticated()
 				.and()
 			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()

@@ -2,7 +2,7 @@ package com.servicemanagement.config.property;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-@ConfigurationProperties("service-management")
+@ConfigurationProperties("servicemanagement")
 public class ApiProperty {
 
 	private String allowedOrigin;

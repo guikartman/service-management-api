@@ -13,11 +13,11 @@ import java.time.LocalDate;
 @ToString
 @EqualsAndHashCode
 @Entity
-@Table(name = "SERVICE")
+@Table(name = "tb_service")
 public class Service {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "SERVICE_ID")
     private Long id;
 
@@ -41,5 +41,16 @@ public class Service {
         user = null;
         customer = null;
         status = Status.OPEN;
+    }
+
+    public Service(User user, Customer customer, String title, LocalDate startDate, LocalDate deliveryDate, String description, BigDecimal price) {
+        this.user = user;
+        this.customer = customer;
+        this.title = title;
+        this.startDate = startDate;
+        this.deliveryDate = deliveryDate;
+        this.description = description;
+        this.price = price;
+        this.status = Status.OPEN;
     }
 }

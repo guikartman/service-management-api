@@ -1,39 +1,53 @@
 package com.servicemanagement.controller;
 
-import com.servicemanagement.repository.UserRepository;
+import com.servicemanagement.domain.User;
+import com.servicemanagement.dto.UserDTO;
+import com.servicemanagement.dto.UserNewDTO;
+import com.servicemanagement.service.UserService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import javax.validation.Valid;
+import java.net.URI;
 
-@RestController
 @Slf4j
-@Validated
+@RestController
+@RequestMapping("/users")
 public class UserController {
 
-    private final UserRepository repository;
+    private UserService userService;
 
-    private final PasswordEncoder passwordEncoder;
-
-    @Autowired
-    UserController(UserRepository repository, PasswordEncoder passwordEncoder) {
-        this.repository = repository;
-        this.passwordEncoder = passwordEncoder;
+    UserController(UserService userService) {
+        this.userService = userService;
     }
 
-    @GetMapping(value = "/time", produces = "application/json")
-    public ZonedDateTime currentTime() {
-        return ZonedDateTime.now();
+    @PostMapping
+    public ResponseEntity<Void> createNewUser(@RequestBody @Valid UserNewDTO userNewDTO){
+        User user = userService.createNewUser(userNewDTO);
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/{id}").buildAndExpand(user.getId()).toUri();
+        return ResponseEntity.created(uri).build();
     }
 
-    @GetMapping(value = "secretTime", produces = "application/json")
-    public ZonedDateTime currentSecretTime() {
-        return ZonedDateTime.now(ZoneId.of("UTC"));
+    @GetMapping("/retrieve-password")
+    public ResponseEntity<Void> retrievePassword(@RequestParam(value="email") String email) {
+        userService.retrievePassword(email);
+        return ResponseEntity.accepted().build();
+    }
+
+    @PostMapping("/{email}/change-password")
+    public ResponseEntity<Void> changePassword(@PathVariable(name = "email") String email, @RequestParam(value = "password") String password) {
+        userService.changePassword(email, password);
+        return ResponseEntity.accepted().build();
+    }
+
+    @GetMapping("/{email}")
+    public ResponseEntity<UserDTO> findUserByEmail(@PathVariable(name = "email") String email) {
+        User user = userService.findUserByEmail(email);
+        UserDTO dto = new UserDTO(user);
+        return ResponseEntity.ok(dto);
     }
 
 }

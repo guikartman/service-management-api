@@ -10,11 +10,11 @@ import javax.persistence.*;
 @ToString
 @EqualsAndHashCode
 @Entity
-@Table(name = "CELLPHONE")
+@Table(name = "tb_cellphone")
 public class Cellphone {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "CELLPHONE_ID")
     private Long id;
 
@@ -23,6 +23,15 @@ public class Cellphone {
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "CUSTOMER_ID")
-    private Customer customer;
+    private final Customer customer;
 
+    public Cellphone() {
+        this.customer = null;
+    }
+
+    public Cellphone(String cellphoneNumber, Boolean isWhatsapp, Customer customer) {
+        this.cellphoneNumber = cellphoneNumber;
+        this.isWhatsapp = isWhatsapp;
+        this.customer = customer;
+    }
 }

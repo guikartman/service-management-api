@@ -2,7 +2,6 @@ package com.servicemanagement.service;
 
 import com.servicemanagement.domain.User;
 import com.servicemanagement.repository.UserRepository;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -32,23 +31,9 @@ class UserDetailsServiceImplTest {
     }
 
     @Test
-    void loadUserByUsernameTest() {
-        User user = new User("test", "test@gmail.com", "test123");
-        given(userRepository.findByUsername("test")).willReturn(Optional.of(user));
-
-        org.springframework.security.core.userdetails.User expectedUser =
-                new org.springframework.security.core.userdetails.User(
-                        user.getUsername(),
-                        user.getPassword(),
-                        Arrays.asList(new SimpleGrantedAuthority("USER")));
-
-        assertThat(userDetailsService.loadUserByUsername("test")).isEqualTo(expectedUser);
-    }
-
-    @Test
     void loadUserByUsernameEmailTest() {
         User user = new User("test", "test@gmail.com", "test123");
-        given(userRepository.findByUsername("test@gmail.com")).willReturn(Optional.of(user));
+        given(userRepository.findByEmail("test@gmail.com")).willReturn(Optional.of(user));
 
         org.springframework.security.core.userdetails.User expectedUser =
                 new org.springframework.security.core.userdetails.User(

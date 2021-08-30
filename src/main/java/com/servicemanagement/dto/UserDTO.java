@@ -11,13 +11,11 @@ import java.io.Serializable;
 public class UserDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    private Long id;
-    private String username;
+    private String name;
     private String email;
 
     public UserDTO(User user) {
-        id = user.getId();
-        username = user.getUsername();
+        name = user.getName();
         email = user.getEmail();
     }
 }
