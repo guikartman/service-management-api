@@ -23,6 +23,14 @@ public interface UserService {
     void changePassword(String email, String oldPassword,String newPassword);
 
     /**
+     * This method will handle the update of the user's name
+     *
+     * @param email
+     * @param userName
+     */
+    void updateUsername(String email, String userName);
+
+    /**
      * This method should generate and save a new password to an user.
      *
      * @param email

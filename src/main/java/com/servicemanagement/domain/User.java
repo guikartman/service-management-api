@@ -1,6 +1,7 @@
 package com.servicemanagement.domain;
 
 import lombok.*;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -26,8 +27,11 @@ public class User {
     @Column(name = "USER_PASS", nullable = false)
     private String password;
 
-    @OneToMany
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private final List<Service> services = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private final List<Customer> customers = new ArrayList<>();
 
     public User(String name, String email, String password) {
         this.name = name;

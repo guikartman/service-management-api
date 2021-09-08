@@ -29,10 +29,10 @@ public class Customer {
     @JoinColumn(name = "USER_ID")
     private final User user;
 
-    @OneToMany
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
     private final List<Service> services = new ArrayList<>();
 
-    @OneToMany
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
     private final Set<Cellphone> cellphones = new HashSet<>();
 
     public Customer () {

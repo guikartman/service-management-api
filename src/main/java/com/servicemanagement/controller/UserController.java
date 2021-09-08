@@ -37,9 +37,15 @@ public class UserController {
         return ResponseEntity.accepted().build();
     }
 
-    @PostMapping("/{email}/change-password")
+    @PutMapping("/{email}/change-password")
     public ResponseEntity<Void> changePassword(@PathVariable(name = "email") String email, @RequestParam(value = "oldPassword") String oldPassword,@RequestParam(value = "newPassword") String newPassword) {
         userService.changePassword(email, oldPassword, newPassword);
+        return ResponseEntity.accepted().build();
+    }
+
+    @PutMapping("/{email}")
+    public ResponseEntity<Void> updateUsername(@PathVariable(name = "email") String email, @RequestParam(value = "name") String name) {
+        userService.updateUsername(email, name);
         return ResponseEntity.accepted().build();
     }
 

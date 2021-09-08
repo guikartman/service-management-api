@@ -67,6 +67,13 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
+    public void updateUsername(String email, String userName) {
+        User user = repository.findByEmail(email).orElseThrow(() -> new EmailNotFoundException(email));
+        user.setName(userName);
+        repository.save(user);
+    }
+
+    @Override
     public User findUserByEmail(String email) {
         return repository.findByEmail(email).orElseThrow(() -> new EmailNotFoundException(email));
     }

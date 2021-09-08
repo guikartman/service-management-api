@@ -86,6 +86,14 @@ class UserServiceImplTest {
     }
 
     @Test
+    void updateUserNameTest() {
+        User user = new User("User Test", "test@gmail.com", passwordEncoder.encode("oldPassword"));
+        given(userRepository.findByEmail("test@gmail.com")).willReturn(Optional.of(user));
+        userService.updateUsername("test@gmail.com", "Updated Username");
+        verify(userRepository, times(1)).save(any(User.class));
+    }
+
+    @Test
     void changePasswordExceptionTest() {
         given(userRepository.findByEmail("test@gmail.com")).willReturn(Optional.empty());
         assertThrows(EmailNotFoundException.class,() -> userService.changePassword("test@gmail.com","oldPassword", "testPassword"));

@@ -21,7 +21,7 @@ public class Cellphone {
     private String cellphoneNumber;
     private Boolean isWhatsapp;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "CUSTOMER_ID")
     private final Customer customer;
 
