@@ -11,7 +11,6 @@ import java.util.Set;
 @RequiredArgsConstructor
 @Getter
 @Setter
-@ToString
 @EqualsAndHashCode
 @Entity
 @Table(name = "tb_customer")
