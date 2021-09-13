@@ -1,7 +1,6 @@
 package com.servicemanagement.controller;
 
 import com.servicemanagement.config.property.ApiProperty;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,7 +16,6 @@ public class TokenController {
 
     private ApiProperty apiProperty;
 
-    @Autowired
     public TokenController(ApiProperty apiProperty) {
         this.apiProperty = apiProperty;
     }

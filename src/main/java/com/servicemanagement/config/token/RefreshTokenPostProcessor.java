@@ -1,7 +1,6 @@
 package com.servicemanagement.config.token;
 
 import com.servicemanagement.config.property.ApiProperty;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -21,8 +20,11 @@ import javax.servlet.http.HttpServletResponse;
 @ControllerAdvice
 public class RefreshTokenPostProcessor implements ResponseBodyAdvice<OAuth2AccessToken> {
 
-	@Autowired
 	private ApiProperty apiProperty;
+
+	public RefreshTokenPostProcessor(ApiProperty apiProperty) {
+		this.apiProperty = apiProperty;
+	}
 	
 	@Override
 	public boolean supports(MethodParameter returnType, Class<? extends HttpMessageConverter<?>> converterType) {

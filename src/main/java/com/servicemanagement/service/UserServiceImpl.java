@@ -6,7 +6,6 @@ import com.servicemanagement.repository.UserRepository;
 import com.servicemanagement.service.exceptions.EmailNotFoundException;
 import com.servicemanagement.service.exceptions.UserAlreadyPresentException;
 import com.servicemanagement.service.exceptions.WrongPasswordException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -23,7 +22,6 @@ public class UserServiceImpl implements UserService{
     private final Random rand;
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    @Autowired
     public UserServiceImpl(UserRepository repository, EmailService emailService){
         this.repository = repository;
         this.emailService = emailService;

@@ -7,6 +7,7 @@ import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.Set;
 
 @AllArgsConstructor
@@ -25,4 +26,8 @@ public class CustomerNewDTO implements Serializable {
     private String name;
 
     private Set<Cellphone> cellphones;
+
+    public Set<Cellphone> getCellphones() {
+        return Collections.unmodifiableSet(cellphones);
+    }
 }

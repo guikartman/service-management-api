@@ -1,7 +1,6 @@
 package com.servicemanagement.config;
 
 import com.servicemanagement.config.token.CustomTokenEnhancer;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -21,10 +20,8 @@ import java.util.Arrays;
 public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
 
 	private AuthenticationManager authenticationManager;
-
 	private UserDetailsService userDetailsService;
 
-	@Autowired
 	public AuthorizationServerConfig(
 			AuthenticationManager authenticationManager,
 			UserDetailsService userDetailsService) {

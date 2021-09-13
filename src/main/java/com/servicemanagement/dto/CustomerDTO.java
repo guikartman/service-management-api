@@ -7,6 +7,7 @@ import lombok.Setter;
 import org.codehaus.jackson.annotate.JsonIgnore;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.Set;
 
 @Getter
@@ -28,5 +29,9 @@ public class CustomerDTO implements Serializable {
         this.email = customer.getEmail();
         this.name = customer.getName();
         this.cellphones = customer.getCellphones();
+    }
+
+    public Set<Cellphone> getCellphones() {
+        return Collections.unmodifiableSet(cellphones);
     }
 }

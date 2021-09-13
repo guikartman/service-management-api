@@ -1,12 +1,10 @@
 package com.servicemanagement.service;
 
-import com.servicemanagement.domain.Cellphone;
 import com.servicemanagement.domain.Customer;
 import com.servicemanagement.domain.User;
 import com.servicemanagement.dto.CustomerDTO;
 import com.servicemanagement.dto.CustomerNewDTO;
 import com.servicemanagement.repository.CustomerRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,7 +15,6 @@ public class CustomerServiceImpl implements CustomerService{
 
     private CustomerRepository repository;
 
-    @Autowired
     public CustomerServiceImpl(CustomerRepository repository){
         this.repository = repository;
     }

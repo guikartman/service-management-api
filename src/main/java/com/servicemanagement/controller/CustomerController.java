@@ -6,7 +6,6 @@ import com.servicemanagement.dto.CustomerDTO;
 import com.servicemanagement.dto.CustomerNewDTO;
 import com.servicemanagement.service.CustomerService;
 import com.servicemanagement.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -22,7 +21,6 @@ public class CustomerController {
     private UserService userService;
     private CustomerService customerService;
 
-    @Autowired
     public CustomerController(UserService userService, CustomerService customerService) {
         this.userService = userService;
         this.customerService = customerService;

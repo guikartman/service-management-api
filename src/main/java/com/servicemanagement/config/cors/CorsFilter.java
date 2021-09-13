@@ -1,7 +1,6 @@
 package com.servicemanagement.config.cors;
 
 import com.servicemanagement.config.property.ApiProperty;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -15,9 +14,12 @@ import java.io.IOException;
 @Component
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class CorsFilter implements Filter {
-	
-	@Autowired
+
 	private ApiProperty apiProperty;
+
+	public CorsFilter(ApiProperty apiProperty){
+		this.apiProperty = apiProperty;
+	}
 
 	@Override
 	public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain)
