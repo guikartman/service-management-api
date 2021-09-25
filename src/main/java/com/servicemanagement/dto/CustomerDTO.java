@@ -4,11 +4,12 @@ import com.servicemanagement.domain.Cellphone;
 import com.servicemanagement.domain.Customer;
 import lombok.Getter;
 import lombok.Setter;
-import org.codehaus.jackson.annotate.JsonIgnore;
+import org.hibernate.validator.constraints.Email;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotEmpty;
 
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
-import java.util.Collections;
-import java.util.Set;
 
 @Getter
 @Setter
@@ -16,10 +17,16 @@ public class CustomerDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private Long id;
+
+    @Email
     private String email;
+
+    @NotEmpty
+    @Length(min = 5)
     private String name;
 
-    private Set<Cellphone> cellphones;
+    @NotNull
+    Cellphone cellphone;
 
     public CustomerDTO(){
     }
@@ -28,10 +35,13 @@ public class CustomerDTO implements Serializable {
         this.id = customer.getId();
         this.email = customer.getEmail();
         this.name = customer.getName();
-        this.cellphones = customer.getCellphones();
+        this.cellphone = customer.getCellphone();
     }
 
-    public Set<Cellphone> getCellphones() {
-        return Collections.unmodifiableSet(cellphones);
+    public CustomerDTO(Long id, String email, String name, Cellphone cellphone) {
+        this.id = id;
+        this.email = email;
+        this.name = name;
+        this.cellphone = cellphone;
     }
 }

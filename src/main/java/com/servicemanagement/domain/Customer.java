@@ -1,12 +1,13 @@
 package com.servicemanagement.domain;
 
-import lombok.*;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @RequiredArgsConstructor
 @Getter
@@ -31,16 +32,26 @@ public class Customer {
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
     private final List<Service> services = new ArrayList<>();
 
-    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
-    private final Set<Cellphone> cellphones = new HashSet<>();
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "CELLPHONE_ID", referencedColumnName = "CELLPHONE_ID")
+    private final Cellphone cellphone;
 
     public Customer () {
+        this.cellphone = null;
         this.user = null;
     }
 
-    public Customer(String email, String name, User user) {
+    public Customer(String email, String name, User user, Cellphone cellphone) {
         this.email = email;
         this.name = name;
         this.user = user;
+        this.cellphone = cellphone;
+    }
+
+    public Customer(Long id,String email, String name, User user, Cellphone cellphone) {
+        this.email = email;
+        this.name = name;
+        this.user = user;
+        this.cellphone = cellphone;
     }
 }

@@ -4,8 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
 
@@ -16,7 +14,6 @@ import javax.persistence.*;
 @Table(name = "tb_cellphone")
 public class Cellphone {
 
-    @JsonIgnore
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "CELLPHONE_ID")
@@ -31,8 +28,7 @@ public class Cellphone {
     private Boolean isWhatsapp;
 
     @JsonIgnore
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "CUSTOMER_ID")
+    @OneToOne(mappedBy = "cellphone")
     private Customer customer;
 
     public Cellphone(Integer ddd,Integer cellphoneNumber, Boolean isWhatsapp, Customer customer) {

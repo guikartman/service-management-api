@@ -1,5 +1,6 @@
 package com.servicemanagement.controller.exceptions;
 
+import com.servicemanagement.service.exceptions.CustomerNotFoundException;
 import com.servicemanagement.service.exceptions.EmailNotFoundException;
 import com.servicemanagement.service.exceptions.UserAlreadyPresentException;
 import com.servicemanagement.service.exceptions.WrongPasswordException;
@@ -33,6 +34,14 @@ public class ControllerExceptionHandler {
     @ExceptionHandler(WrongPasswordException.class)
     public ResponseEntity<StandardError> wrongPasswordException(WrongPasswordException e, HttpServletRequest request){
         String message = "A senha informada está incorreta.";
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        StandardError err = new StandardError(Instant.now(), status.value(), message, e.getMessage(), request.getRequestURI());
+        return ResponseEntity.status(status).body(err);
+    }
+
+    @ExceptionHandler(CustomerNotFoundException.class)
+    public ResponseEntity<StandardError> customerNotFoundException(CustomerNotFoundException e, HttpServletRequest request) {
+        String message = "Cliente não encontrado.";
         HttpStatus status = HttpStatus.BAD_REQUEST;
         StandardError err = new StandardError(Instant.now(), status.value(), message, e.getMessage(), request.getRequestURI());
         return ResponseEntity.status(status).body(err);
