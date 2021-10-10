@@ -5,6 +5,8 @@ import com.servicemanagement.domain.Customer;
 import com.servicemanagement.domain.User;
 import com.servicemanagement.dto.CustomerDTO;
 import com.servicemanagement.repository.CustomerRepository;
+import com.servicemanagement.service.exceptions.CustomerNotFoundException;
+import com.servicemanagement.service.exceptions.UserAlreadyPresentException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -13,6 +15,7 @@ import org.mockito.MockitoAnnotations;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 class CustomerServiceImplTest {
@@ -35,14 +38,14 @@ class CustomerServiceImplTest {
     }
 
     @Test
-    public void createNewCustomerTest() {
+    void createNewCustomerTest() {
         CustomerDTO customerDTO = new CustomerDTO( null,"testc@gmail.com", "Customer Test", cellphone);
         service.createNewCustomer(customerDTO, user);
         verify(customerRepository, times(1)).save(any(Customer.class));
     }
 
     @Test
-    public void getCustomersByUserTest() {
+    void getCustomersByUserTest() {
         Customer customer1 = new Customer("customer1","c1@gmail.com",user, cellphone);
         Customer customer2 = new Customer("customer2","c2@gmail.com",user, cellphone);
         when(customerRepository.findCustomersByUser(user)).thenReturn(Arrays.asList(customer1,customer2));
@@ -52,7 +55,7 @@ class CustomerServiceImplTest {
     }
 
     @Test
-    public void updateCustomerTest() {
+    void updateCustomerTest() {
         Customer testCustomer = new Customer(1L,"test@gmail.com","Test", user, cellphone);
         when(customerRepository.findById(1L)).thenReturn(Optional.of(testCustomer));
         CustomerDTO customerDTO = new CustomerDTO(1L,"test@gmail.com","Test", cellphone);
@@ -61,10 +64,23 @@ class CustomerServiceImplTest {
     }
 
     @Test
-    public void deleteCustomerTest() {
+    void deleteCustomerTest() {
         Customer testCustomer = new Customer(1L,"test@gmail.com","Test", user, cellphone);
         when(customerRepository.findById(1L)).thenReturn(Optional.of(testCustomer));
         service.deleteCustomerById(1L);
         verify(customerRepository,times(1)).delete(testCustomer);
+    }
+
+    @Test
+    void getCustomerByIdTest() {
+        Customer testCustomer = new Customer(1L,"test@gmail.com","Test", user, cellphone);
+        when(customerRepository.findById(1L)).thenReturn(Optional.of(testCustomer));
+        Customer actual = service.getCustomerById(1L);
+        assertThat(actual).isEqualTo(testCustomer);
+    }
+
+    @Test
+    void getCustomerByIdExceptionTest() {
+        assertThrows(CustomerNotFoundException.class, () -> service.getCustomerById(1L));
     }
 }

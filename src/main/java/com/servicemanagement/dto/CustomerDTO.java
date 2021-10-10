@@ -18,14 +18,14 @@ public class CustomerDTO implements Serializable {
 
     private Long id;
 
-    @Email
+    @Email(message = "O email deve ser valido.")
     private String email;
 
-    @NotEmpty
-    @Length(min = 5)
+    @NotEmpty(message = "O campo nome deve ser preenchido.")
+    @Length(min = 5, message = "O nome deve conter mais do que 5 caracteres.")
     private String name;
 
-    @NotNull
+    @NotNull(message = "O cliente deve possuir 1 celular.")
     Cellphone cellphone;
 
     public CustomerDTO(){

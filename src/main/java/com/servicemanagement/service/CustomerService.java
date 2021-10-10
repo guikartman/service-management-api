@@ -38,4 +38,12 @@ public interface CustomerService {
      * @param id
      */
     void deleteCustomerById(Long id);
+
+    /**
+     * This method should find and return a Customer by his Id.
+     *
+     * @param id
+     * @return
+     */
+    Customer getCustomerById(Long id);
 }

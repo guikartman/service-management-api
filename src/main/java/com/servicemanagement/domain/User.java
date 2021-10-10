@@ -26,7 +26,7 @@ public class User {
     private String password;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private final List<Service> services = new ArrayList<>();
+    private final List<Order> orders = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private final List<Customer> customers = new ArrayList<>();

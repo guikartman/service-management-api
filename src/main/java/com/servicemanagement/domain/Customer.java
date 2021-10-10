@@ -1,5 +1,6 @@
 package com.servicemanagement.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -25,12 +26,14 @@ public class Customer {
     private String email;
     private String name;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "USER_ID")
     private final User user;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
-    private final List<Service> services = new ArrayList<>();
+    private final List<Order> orders = new ArrayList<>();
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "CELLPHONE_ID", referencedColumnName = "CELLPHONE_ID")
