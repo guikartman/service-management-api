@@ -1,10 +1,9 @@
 package com.servicemanagement.controller;
 
-import com.servicemanagement.domain.Customer;
 import com.servicemanagement.domain.Order;
 import com.servicemanagement.domain.User;
+import com.servicemanagement.domain.enums.Status;
 import com.servicemanagement.dto.OrderDTO;
-import com.servicemanagement.service.CustomerService;
 import com.servicemanagement.service.OrderService;
 import com.servicemanagement.service.UserService;
 import org.springframework.http.ResponseEntity;
@@ -20,25 +19,39 @@ import java.util.List;
 public class OrderController {
 
     private final OrderService orderService;
-    private final CustomerService customerService;
     private final UserService userService;
 
-    public OrderController(OrderService orderService, CustomerService customerService,UserService userService) {
+    public OrderController(OrderService orderService, UserService userService) {
         this.orderService = orderService;
-        this.customerService = customerService;
         this.userService = userService;
     }
 
     @PostMapping
-    public ResponseEntity<Void> createNewOrder(@RequestParam(value = "email") String email,@RequestParam(value = "customerId") Long customerId, @Valid @RequestBody OrderDTO orderDTO) {
-        User user = userService.findUserByEmail(email);
-        Customer customer = customerService.getCustomerById(customerId);
+    public ResponseEntity<Void> createNewOrder(@RequestParam(value = "email") String email, @Valid @RequestBody OrderDTO orderDTO) {
+        var user = userService.findUserByEmail(email);
         orderDTO.setUser(user);
-        orderDTO.setCustomer(customer);
-        Order order = orderService.createNewService(orderDTO);
-        URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
+        var order = orderService.createNewService(orderDTO);
+        var uri = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}").buildAndExpand(order.getId()).toUri();
         return ResponseEntity.created(uri).build();
+    }
+
+    @DeleteMapping(value = "/{id}")
+    public ResponseEntity<Void> deleteOrder(@PathVariable(value = "id") Long id) {
+        orderService.deleteServiceById(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping
+    public ResponseEntity<Void> updateOrder(@Valid @RequestBody OrderDTO orderDTO) {
+        orderService.updateService(orderDTO);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping(value = "/{id}")
+    public ResponseEntity<Void> updateStatus(@PathVariable(value = "id") Long id, @RequestParam(value = "status") String status) {
+        orderService.updateStatus(id, Status.valueOf(status));
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping

@@ -1,7 +1,10 @@
 package com.servicemanagement.domain;
 
 import com.servicemanagement.domain.enums.Status;
-import lombok.*;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -24,9 +27,9 @@ public class Order {
     @JoinColumn(name = "USER_ID")
     private final User user;
 
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    @ManyToOne
     @JoinColumn(name = "CUSTOMER_ID")
-    private final Customer customer;
+    private Customer customer;
 
     private String title;
     private LocalDate startDate;
@@ -38,7 +41,6 @@ public class Order {
 
     public Order() {
         user = null;
-        customer = null;
         status = Status.OPEN;
     }
 

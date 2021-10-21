@@ -6,17 +6,18 @@ import com.servicemanagement.domain.User;
 import com.servicemanagement.dto.CustomerDTO;
 import com.servicemanagement.repository.CustomerRepository;
 import com.servicemanagement.service.exceptions.CustomerNotFoundException;
-import com.servicemanagement.service.exceptions.UserAlreadyPresentException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
+import static org.mockito.MockitoAnnotations.openMocks;
 
 class CustomerServiceImplTest {
 
@@ -31,7 +32,7 @@ class CustomerServiceImplTest {
 
     @BeforeEach
     public void init() {
-        MockitoAnnotations.openMocks(this);
+        openMocks(this);
         this.service = new CustomerServiceImpl(customerRepository);
         this.user = new User("test","test@gmail.com","test");
         this.cellphone = new Cellphone(61, 999999999, true, customer);

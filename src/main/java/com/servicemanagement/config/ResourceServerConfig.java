@@ -1,7 +1,5 @@
 package com.servicemanagement.config;
 
-import com.servicemanagement.service.EmailService;
-import com.servicemanagement.service.SmtpEmailService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;

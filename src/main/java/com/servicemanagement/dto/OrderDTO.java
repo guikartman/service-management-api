@@ -64,14 +64,14 @@ public class OrderDTO implements Serializable {
         this.user = order.getUser();
     }
 
-    public OrderDTO(String title, LocalDate startDate, LocalDate deliveryDate, String description, BigDecimal price, Customer customer) {
+    public OrderDTO(String title, LocalDate startDate, LocalDate deliveryDate, String description, BigDecimal price, Boolean isPayed, Customer customer) {
         this.title = title;
         this.startDate = startDate;
         this.deliveryDate = deliveryDate;
         this.description = description;
         this.price = price;
         this.status = Status.OPEN;
-        this.isPayed = false;
+        this.isPayed = isPayed;
         this.customer = customer;
     }
 }
