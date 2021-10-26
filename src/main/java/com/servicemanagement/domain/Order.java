@@ -38,13 +38,14 @@ public class Order {
     private BigDecimal price;
     private Status status;
     private Boolean isPayed;
+    private String imageUrl;
 
     public Order() {
         user = null;
         status = Status.OPEN;
     }
 
-    public Order(User user, Customer customer, String title, LocalDate startDate, LocalDate deliveryDate, String description, BigDecimal price, Boolean isPayed) {
+    public Order(User user, Customer customer, String title, LocalDate startDate, LocalDate deliveryDate, String description, BigDecimal price, Boolean isPayed, String imageUrl) {
         this.user = user;
         this.customer = customer;
         this.title = title;
@@ -54,9 +55,10 @@ public class Order {
         this.price = price;
         this.isPayed = isPayed;
         this.status = Status.OPEN;
+        this.imageUrl = imageUrl;
     }
 
-    public Order(Long id,User user, Customer customer, String title, LocalDate startDate, LocalDate deliveryDate, String description, BigDecimal price) {
+    public Order(Long id,User user, Customer customer, String title, LocalDate startDate, LocalDate deliveryDate, String description, BigDecimal price, String imageUrl) {
         this.id = id;
         this.user = user;
         this.customer = customer;
@@ -67,9 +69,10 @@ public class Order {
         this.price = price;
         this.isPayed = false;
         this.status = Status.OPEN;
+        this.imageUrl = imageUrl;
     }
 
-    public Order(Long id, User user, Customer customer, String title, LocalDate startDate, LocalDate deliveryDate, String description, BigDecimal price, Status status, Boolean isPayed) {
+    public Order(Long id, User user, Customer customer, String title, LocalDate startDate, LocalDate deliveryDate, String description, BigDecimal price, Status status, Boolean isPayed, String imageUrl) {
         this.id = id;
         this.user = user;
         this.customer = customer;
@@ -80,5 +83,6 @@ public class Order {
         this.price = price;
         this.status = status;
         this.isPayed = isPayed;
+        this.imageUrl = imageUrl;
     }
 }

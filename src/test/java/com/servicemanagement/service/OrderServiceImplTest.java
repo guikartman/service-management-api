@@ -58,7 +58,8 @@ class OrderServiceImplTest {
                 "Order test",
                 BigDecimal.valueOf(25.50),
                 false,
-                customerMocked);
+                customerMocked,
+                "dummy_url");
         service.createNewService(dto);
         verify(repository, times(1)).save(orderCaptor.capture());
         Order order = orderCaptor.getValue();
@@ -74,7 +75,8 @@ class OrderServiceImplTest {
                 "Order test",
                 BigDecimal.valueOf(25.50),
                 null,
-                customerMocked);
+                customerMocked,
+                "dummy_url");
         dto.setStatus(null);
         service.createNewService(dto);
 
@@ -108,7 +110,8 @@ class OrderServiceImplTest {
                 "Order test",
                 BigDecimal.valueOf(25.50),
                 false,
-                customerMocked);
+                customerMocked,
+                "dummy_url");
         dto.setId(1L);
         service.updateService(dto);
         verify(repository, times(1)).save(orderCaptor.capture());

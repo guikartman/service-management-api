@@ -47,6 +47,7 @@ public class OrderServiceImpl implements OrderService {
         order.setPrice(dto.getPrice());
         order.setIsPayed(dto.getIsPayed());
         order.setCustomer(dto.getCustomer());
+        order.setImageUrl(dto.getImageUrl());
         repository.save(order);
     }
 
@@ -76,6 +77,7 @@ public class OrderServiceImpl implements OrderService {
                 dto.getDescription(),
                 dto.getPrice(),
                 status,
-                isPayed);
+                isPayed,
+                dto.getImageUrl());
     }
 }

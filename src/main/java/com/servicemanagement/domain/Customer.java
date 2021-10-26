@@ -32,7 +32,7 @@ public class Customer {
     private final User user;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "customer")
     private final List<Order> orders = new ArrayList<>();
 
     @OneToOne(cascade = CascadeType.ALL)

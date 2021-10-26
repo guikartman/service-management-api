@@ -43,6 +43,8 @@ public class OrderDTO implements Serializable {
 
     private Boolean isPayed;
 
+    private String imageUrl;
+
     private Customer customer;
 
     @JsonIgnore
@@ -62,9 +64,10 @@ public class OrderDTO implements Serializable {
         this.isPayed = order.getIsPayed();
         this.customer = order.getCustomer();
         this.user = order.getUser();
+        this.imageUrl = order.getImageUrl();
     }
 
-    public OrderDTO(String title, LocalDate startDate, LocalDate deliveryDate, String description, BigDecimal price, Boolean isPayed, Customer customer) {
+    public OrderDTO(String title, LocalDate startDate, LocalDate deliveryDate, String description, BigDecimal price, Boolean isPayed, Customer customer, String imageUrl) {
         this.title = title;
         this.startDate = startDate;
         this.deliveryDate = deliveryDate;
@@ -73,5 +76,6 @@ public class OrderDTO implements Serializable {
         this.status = Status.OPEN;
         this.isPayed = isPayed;
         this.customer = customer;
+        this.imageUrl = imageUrl;
     }
 }
