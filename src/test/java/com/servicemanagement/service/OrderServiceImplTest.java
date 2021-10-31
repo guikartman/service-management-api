@@ -36,6 +36,9 @@ class OrderServiceImplTest {
     private User userMocked;
 
     @Mock
+    private S3Service s3ServiceMock;
+
+    @Mock
     private Order orderMocked;
 
     @Captor
@@ -46,7 +49,7 @@ class OrderServiceImplTest {
     @BeforeEach
     public void initTest() {
         openMocks(this);
-        this.service = spy(new OrderServiceImpl(repository));
+        this.service = spy(new OrderServiceImpl(repository, s3ServiceMock));
     }
 
     @Test
@@ -96,6 +99,14 @@ class OrderServiceImplTest {
     }
 
     @Test
+    void deleteServiceByIdWithImageTest() {
+        when(orderMocked.getImageUrl()).thenReturn("dummy.url");
+        when(repository.findById(anyLong())).thenReturn(Optional.of(orderMocked));
+        service.deleteServiceById(1L);
+        verify(s3ServiceMock, times(1)).deleteFile(anyString());
+    }
+
+    @Test
     void deleteServiceByIdExceptionTest() {
         assertThrows(OrderNotFoundException.class, () -> service.deleteServiceById(1L));
     }
@@ -116,6 +127,25 @@ class OrderServiceImplTest {
         service.updateService(dto);
         verify(repository, times(1)).save(orderCaptor.capture());
         assertThat(orderCaptor.getValue()).isNotNull();
+    }
+
+    @Test
+    void updateServiceWithNewImageTest() {
+        final String oldImageUrl = "oldImageUrl";
+        when(orderMocked.getImageUrl()).thenReturn(oldImageUrl);
+        when(repository.findById(anyLong())).thenReturn(Optional.of(orderMocked));
+        OrderDTO dto = new OrderDTO(
+                "test",
+                LocalDate.now(),
+                LocalDate.of(2021,9,30),
+                "Order test",
+                BigDecimal.valueOf(25.50),
+                false,
+                customerMocked,
+                "dummy_url");
+        dto.setId(1L);
+        service.updateService(dto);
+        verify(s3ServiceMock, times(1)).deleteFile(oldImageUrl);
     }
 
     @Test

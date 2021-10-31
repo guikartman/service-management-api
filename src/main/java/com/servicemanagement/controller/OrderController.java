@@ -1,6 +1,5 @@
 package com.servicemanagement.controller;
 
-import com.servicemanagement.domain.Order;
 import com.servicemanagement.domain.User;
 import com.servicemanagement.domain.enums.Status;
 import com.servicemanagement.dto.OrderDTO;
@@ -11,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
-import java.net.URI;
 import java.util.List;
 
 @RestController

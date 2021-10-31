@@ -47,5 +47,4 @@ public interface OrderService {
      */
     void updateStatus(Long id, Status status);
 
-
 }

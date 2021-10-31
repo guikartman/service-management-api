@@ -9,15 +9,18 @@ import com.servicemanagement.service.exceptions.OrderNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
 public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository repository;
+    private final S3Service s3Service;
 
-    public OrderServiceImpl(OrderRepository repository) {
+    public OrderServiceImpl(OrderRepository repository, S3Service s3Service) {
         this.repository = repository;
+        this.s3Service = s3Service;
     }
 
     @Override
@@ -34,7 +37,9 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void deleteServiceById(Long id) {
         var order = repository.findById(id).orElseThrow(() -> new OrderNotFoundException(id));
+        String imageUrl = order.getImageUrl();
         repository.delete(order);
+        deleteOldImageFromS3(imageUrl);
     }
 
     @Override
@@ -47,8 +52,36 @@ public class OrderServiceImpl implements OrderService {
         order.setPrice(dto.getPrice());
         order.setIsPayed(dto.getIsPayed());
         order.setCustomer(dto.getCustomer());
-        order.setImageUrl(dto.getImageUrl());
+        String oldImageUrl = updateImage(order, dto);
         repository.save(order);
+        deleteOldImageFromS3(oldImageUrl);
+    }
+
+    private void deleteOldImageFromS3(String oldImage) {
+        if (Objects.nonNull(oldImage) && oldImage.length() > 0) {
+            String[] splitUrl = oldImage.split("/");
+            String keyName = splitUrl[splitUrl.length - 1];
+            s3Service.deleteFile(keyName);
+        }
+    }
+
+    /**
+     *
+     * Update the image ulr and return the old link.
+     *
+     * @param order
+     * @param orderDTO
+     * @return
+     */
+    private String updateImage(Order order, OrderDTO orderDTO) {
+        String oldUrl = null;
+        if (Objects.isNull(order.getImageUrl()) && Objects.nonNull(orderDTO.getImageUrl())) {
+            order.setImageUrl(orderDTO.getImageUrl());
+        } else if(!Objects.equals(order.getImageUrl(), orderDTO.getImageUrl())) {
+            oldUrl = order.getImageUrl();
+            order.setImageUrl(orderDTO.getImageUrl());
+        }
+        return oldUrl;
     }
 
     @Override

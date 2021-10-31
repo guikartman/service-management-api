@@ -1,9 +1,8 @@
 package com.servicemanagement.controller.exceptions;
 
-import com.servicemanagement.service.exceptions.CustomerNotFoundException;
-import com.servicemanagement.service.exceptions.EmailNotFoundException;
-import com.servicemanagement.service.exceptions.UserAlreadyPresentException;
-import com.servicemanagement.service.exceptions.WrongPasswordException;
+import com.amazonaws.AmazonClientException;
+import com.amazonaws.AmazonServiceException;
+import com.servicemanagement.service.exceptions.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -44,6 +43,27 @@ public class ControllerExceptionHandler {
         String message = "Cliente não encontrado.";
         HttpStatus status = HttpStatus.BAD_REQUEST;
         StandardError err = new StandardError(Instant.now(), status.value(), message, e.getMessage(), request.getRequestURI());
+        return ResponseEntity.status(status).body(err);
+    }
+
+    @ExceptionHandler(FileException.class)
+    public ResponseEntity<StandardError> fileException(FileException e, HttpServletRequest  request) {
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        StandardError err = new StandardError(Instant.now(), status.value(), e.getMessage(),e.getMessage(), request.getRequestURI());
+        return ResponseEntity.status(status).body(err);
+    }
+
+    @ExceptionHandler(AmazonServiceException.class)
+    public ResponseEntity<StandardError> amazonServiceException(AmazonServiceException e, HttpServletRequest  request) {
+        HttpStatus status = HttpStatus.valueOf(e.getErrorCode());
+        StandardError err = new StandardError(Instant.now(), status.value(), e.getMessage(),e.getMessage(), request.getRequestURI());
+        return ResponseEntity.status(status).body(err);
+    }
+
+    @ExceptionHandler(AmazonClientException.class)
+    public ResponseEntity<StandardError> amazonClientException(AmazonClientException e, HttpServletRequest  request) {
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        StandardError err = new StandardError(Instant.now(), status.value(), e.getMessage(),e.getMessage(), request.getRequestURI());
         return ResponseEntity.status(status).body(err);
     }
 
