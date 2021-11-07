@@ -4,12 +4,16 @@ import com.servicemanagement.domain.Order;
 import com.servicemanagement.domain.User;
 import com.servicemanagement.domain.enums.Status;
 import com.servicemanagement.dto.OrderDTO;
+import com.servicemanagement.dto.ReportDTO;
 import com.servicemanagement.repository.OrderRepository;
 import com.servicemanagement.service.exceptions.OrderNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 @Service
@@ -57,6 +61,34 @@ public class OrderServiceImpl implements OrderService {
         deleteOldImageFromS3(oldImageUrl);
     }
 
+    @Override
+    public ReportDTO retrieveReports(User user) {
+        List<Order> allOrders = repository.findByUserOrderByDeliveryDate(user);
+        return buildReport(allOrders);
+    }
+
+    private ReportDTO buildReport(List<Order> orders) {
+        AtomicReference<BigDecimal> totalCash = new AtomicReference<>(BigDecimal.ZERO);
+        AtomicReference<BigDecimal> totalCashEarned = new AtomicReference<>(BigDecimal.ZERO);
+        AtomicReference<Integer> totalOrder = new AtomicReference<>(0);
+        AtomicReference<Integer> totalOrderCompleted = new AtomicReference<>(0);
+        AtomicReference<Integer> totalOrderDelayed = new AtomicReference<>(0);
+        AtomicReference<Integer> totalOrderInProgress = new AtomicReference<>(0);
+        AtomicReference<Integer> totalOrderOpen = new AtomicReference<>(0);
+        orders.forEach(order -> {
+            totalCash.compareAndSet(totalCash.get(), totalCash.get().add(order.getPrice()));
+            totalOrder.getAndSet(totalOrder.get() + 1);
+            if (order.getIsPayed()) totalCashEarned.compareAndSet(totalCashEarned.get(), totalCashEarned.get().add(order.getPrice()));
+            if (order.getStatus().equals(Status.COMPLETED)) totalOrderCompleted.getAndSet(totalOrderCompleted.get() + 1);
+            if (order.getStatus().equals(Status.OPEN) && order.getDeliveryDate().isBefore(LocalDate.now()))
+                totalOrderDelayed.getAndSet(totalOrderDelayed.get() + 1);
+            if (order.getStatus().equals(Status.OPEN) && (order.getStartDate().isBefore(LocalDate.now()) || order.getStartDate().isEqual(LocalDate.now())) && order.getDeliveryDate().isAfter(LocalDate.now()))
+                totalOrderInProgress.getAndSet(totalOrderInProgress.get() + 1);
+            if (order.getStatus().equals(Status.OPEN) && order.getStartDate().isAfter(LocalDate.now()) && order.getDeliveryDate().isAfter(LocalDate.now())) totalOrderOpen.getAndSet(totalOrderOpen.get() + 1);
+        });
+        return new ReportDTO(totalCash.get(), totalCashEarned.get(), totalOrder.get(), totalOrderCompleted.get(), totalOrderDelayed.get(), totalOrderInProgress.get(), totalOrderOpen.get());
+    }
+
     private void deleteOldImageFromS3(String oldImage) {
         if (Objects.nonNull(oldImage) && oldImage.length() > 0) {
             String[] splitUrl = oldImage.split("/");
@@ -88,6 +120,13 @@ public class OrderServiceImpl implements OrderService {
     public void updateStatus(Long id, Status status) {
         var order = repository.findById(id).orElseThrow(() -> new OrderNotFoundException(id));
         order.setStatus(status);
+        repository.save(order);
+    }
+
+    @Override
+    public void updatePayedStatus(Long id) {
+        var order = repository.findById(id).orElseThrow(() -> new OrderNotFoundException(id));
+        order.setIsPayed(!order.getIsPayed());
         repository.save(order);
     }
 

@@ -4,6 +4,7 @@ import com.servicemanagement.domain.Order;
 import com.servicemanagement.domain.User;
 import com.servicemanagement.domain.enums.Status;
 import com.servicemanagement.dto.OrderDTO;
+import com.servicemanagement.dto.ReportDTO;
 
 import java.util.List;
 
@@ -47,4 +48,18 @@ public interface OrderService {
      */
     void updateStatus(Long id, Status status);
 
+    /**
+     * This method should update the payed status.
+     *
+     * @param id
+     */
+    void updatePayedStatus(Long id);
+
+    /**
+     * This method should create and return reports.
+     *
+     * @param user
+     * @return
+     */
+    ReportDTO retrieveReports(User user);
 }

@@ -1,8 +1,8 @@
 package com.servicemanagement.controller;
 
-import com.servicemanagement.domain.User;
 import com.servicemanagement.domain.enums.Status;
 import com.servicemanagement.dto.OrderDTO;
+import com.servicemanagement.dto.ReportDTO;
 import com.servicemanagement.service.OrderService;
 import com.servicemanagement.service.UserService;
 import org.springframework.http.ResponseEntity;
@@ -52,10 +52,23 @@ public class OrderController {
         return ResponseEntity.noContent().build();
     }
 
+    @PatchMapping(value = "/payed-status/{id}")
+    public ResponseEntity<Void> updatePayedStatus(@PathVariable(value = "id") Long id) {
+        orderService.updatePayedStatus(id);
+        return ResponseEntity.noContent().build();
+    }
+
     @GetMapping
     public ResponseEntity<List<OrderDTO>> getUserOrdersByEmail(@RequestParam(value = "email") String email) {
-        User user = userService.findUserByEmail(email);
+        var user = userService.findUserByEmail(email);
         List<OrderDTO> ordersDTO = orderService.findServicesByUser(user);
         return ResponseEntity.ok(ordersDTO);
+    }
+
+    @GetMapping(value = "/reports")
+    public ResponseEntity<ReportDTO> getReports(@RequestParam(value = "email") String email) {
+        var user = userService.findUserByEmail(email);
+        ReportDTO reportDTO = orderService.retrieveReports(user);
+        return ResponseEntity.ok(reportDTO);
     }
 }

@@ -130,6 +130,26 @@ class OrderServiceImplTest {
     }
 
     @Test
+    void updatePayedStatusFalseTest() {
+        var order = new Order();
+        order.setIsPayed(true);
+        when(repository.findById(anyLong())).thenReturn(Optional.of(order));
+        service.updatePayedStatus(1L);
+        verify(repository, times(1)).save(orderCaptor.capture());
+        assertThat(orderCaptor.getValue().getIsPayed()).isFalse();
+    }
+
+    @Test
+    void updatePayedStatusTrueTest() {
+        var order = new Order();
+        order.setIsPayed(false);
+        when(repository.findById(anyLong())).thenReturn(Optional.of(order));
+        service.updatePayedStatus(1L);
+        verify(repository, times(1)).save(orderCaptor.capture());
+        assertThat(orderCaptor.getValue().getIsPayed()).isTrue();
+    }
+
+    @Test
     void updateServiceWithNewImageTest() {
         final String oldImageUrl = "oldImageUrl";
         when(orderMocked.getImageUrl()).thenReturn(oldImageUrl);
