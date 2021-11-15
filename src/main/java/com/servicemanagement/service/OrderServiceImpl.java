@@ -79,15 +79,16 @@ public class OrderServiceImpl implements OrderService {
             totalCash.compareAndSet(totalCash.get(), totalCash.get().add(order.getPrice()));
             totalOrder.getAndSet(totalOrder.get() + 1);
             if (order.getIsPayed()) totalCashEarned.compareAndSet(totalCashEarned.get(), totalCashEarned.get().add(order.getPrice()));
-            if (order.getStatus().equals(Status.COMPLETED)) totalOrderCompleted.getAndSet(totalOrderCompleted.get() + 1);
-            if (order.getStatus().equals(Status.OPEN) && order.getDeliveryDate().isBefore(LocalDate.now()))
+            if (isCompleted(order)) totalOrderCompleted.getAndSet(totalOrderCompleted.get() + 1);
+            if (isDelayed(order))
                 totalOrderDelayed.getAndSet(totalOrderDelayed.get() + 1);
-            if (order.getStatus().equals(Status.OPEN) && (order.getStartDate().isBefore(LocalDate.now()) || order.getStartDate().isEqual(LocalDate.now())) && order.getDeliveryDate().isAfter(LocalDate.now()))
+            if (isInProgress(order))
                 totalOrderInProgress.getAndSet(totalOrderInProgress.get() + 1);
-            if (order.getStatus().equals(Status.OPEN) && order.getStartDate().isAfter(LocalDate.now()) && order.getDeliveryDate().isAfter(LocalDate.now())) totalOrderOpen.getAndSet(totalOrderOpen.get() + 1);
+            if (isOpen(order)) totalOrderOpen.getAndSet(totalOrderOpen.get() + 1);
         });
-        return new ReportDTO(totalCash.get(), totalCashEarned.get(), totalOrder.get(), totalOrderCompleted.get(), totalOrderDelayed.get(), totalOrderInProgress.get(), totalOrderOpen.get());
+        return new ReportDTO(BigDecimal.valueOf(totalCash.get().doubleValue()), BigDecimal.valueOf(totalCashEarned.get().doubleValue()), totalOrder.get(), totalOrderCompleted.get(), totalOrderDelayed.get(), totalOrderInProgress.get(), totalOrderOpen.get());
     }
+
 
     private void deleteOldImageFromS3(String oldImage) {
         if (Objects.nonNull(oldImage) && oldImage.length() > 0) {
@@ -151,5 +152,22 @@ public class OrderServiceImpl implements OrderService {
                 status,
                 isPayed,
                 dto.getImageUrl());
+    }
+
+    private boolean isCompleted(Order order) {
+        return order.getStatus().equals(Status.COMPLETED);
+    }
+
+    private boolean isOpen(Order order) {
+        return order.getStatus().equals(Status.OPEN) && order.getStartDate().isAfter(LocalDate.now()) && order.getDeliveryDate().isAfter(LocalDate.now());
+    }
+
+    private boolean isDelayed(Order order) {
+        return order.getStatus().equals(Status.OPEN) && order.getDeliveryDate().isBefore(LocalDate.now());
+    }
+
+    private boolean isInProgress(Order order) {
+        return order.getStatus().equals(Status.OPEN) &&
+                (order.getStartDate().isBefore(LocalDate.now()) || order.getStartDate().isEqual(LocalDate.now())) && (order.getDeliveryDate().isAfter(LocalDate.now()) || order.getDeliveryDate().isEqual(LocalDate.now()));
     }
 }

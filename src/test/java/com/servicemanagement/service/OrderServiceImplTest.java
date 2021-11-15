@@ -5,6 +5,7 @@ import com.servicemanagement.domain.Order;
 import com.servicemanagement.domain.User;
 import com.servicemanagement.domain.enums.Status;
 import com.servicemanagement.dto.OrderDTO;
+import com.servicemanagement.dto.ReportDTO;
 import com.servicemanagement.repository.OrderRepository;
 import com.servicemanagement.service.exceptions.OrderNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,9 +16,7 @@ import org.mockito.Mock;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -41,6 +40,18 @@ class OrderServiceImplTest {
     @Mock
     private Order orderMocked;
 
+    @Mock
+    private Order openOrder;
+
+    @Mock
+    private Order inProgressOrder;
+
+    @Mock
+    private Order delayedOrder;
+
+    @Mock
+    private Order completedOrder;
+
     @Captor
     private ArgumentCaptor<Order> orderCaptor;
 
@@ -50,6 +61,24 @@ class OrderServiceImplTest {
     public void initTest() {
         openMocks(this);
         this.service = spy(new OrderServiceImpl(repository, s3ServiceMock));
+        when(openOrder.getStatus()).thenReturn(Status.OPEN);
+        when(openOrder.getPrice()).thenReturn(BigDecimal.valueOf(50));
+        when(openOrder.getIsPayed()).thenReturn(false);
+        when(openOrder.getStartDate()).thenReturn(LocalDate.now().plusDays(1));
+        when(openOrder.getDeliveryDate()).thenReturn(LocalDate.now().plusDays(2));
+        when(inProgressOrder.getStatus()).thenReturn(Status.OPEN);
+        when(inProgressOrder.getPrice()).thenReturn(BigDecimal.TEN);
+        when(inProgressOrder.getIsPayed()).thenReturn(true);
+        when(inProgressOrder.getStartDate()).thenReturn(LocalDate.now());
+        when(inProgressOrder.getDeliveryDate()).thenReturn(LocalDate.now().plusDays(2));
+        when(delayedOrder.getStatus()).thenReturn(Status.OPEN);
+        when(delayedOrder.getPrice()).thenReturn(BigDecimal.valueOf(50));
+        when(delayedOrder.getIsPayed()).thenReturn(false);
+        when(delayedOrder.getStartDate()).thenReturn(LocalDate.now().minusDays(2));
+        when(delayedOrder.getDeliveryDate()).thenReturn(LocalDate.now().minusDays(1));
+        when(completedOrder.getStatus()).thenReturn(Status.COMPLETED);
+        when(completedOrder.getPrice()).thenReturn(BigDecimal.TEN);
+        when(completedOrder.getIsPayed()).thenReturn(true);
     }
 
     @Test
@@ -166,6 +195,21 @@ class OrderServiceImplTest {
         dto.setId(1L);
         service.updateService(dto);
         verify(s3ServiceMock, times(1)).deleteFile(oldImageUrl);
+    }
+
+    @Test
+    void buildCompleteReportTest() {
+        when(openOrder.getStatus()).thenReturn(Status.OPEN);
+        List<Order> orders = new ArrayList<>(Arrays.asList(openOrder, inProgressOrder, delayedOrder, completedOrder));
+        when(repository.findByUserOrderByDeliveryDate(userMocked)).thenReturn(orders);
+        ReportDTO reportDTO = service.retrieveReports(userMocked);
+        assertThat(reportDTO.getTotalCash()).isEqualTo(BigDecimal.valueOf(120.0));
+        assertThat(reportDTO.getTotalCashEarned()).isEqualTo(BigDecimal.valueOf(20.0));
+        assertThat(reportDTO.getTotalOrder()).isEqualTo(4);
+        assertThat(reportDTO.getTotalOrderOpen()).isEqualTo(1);
+        assertThat(reportDTO.getTotalOrderInProgress()).isEqualTo(1);
+        assertThat(reportDTO.getTotalOrderDelayed()).isEqualTo(1);
+        assertThat(reportDTO.getTotalOrderCompleted()).isEqualTo(1);
     }
 
     @Test
